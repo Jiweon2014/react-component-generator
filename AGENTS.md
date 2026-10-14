@@ -25,9 +25,9 @@
 
 - Vite 프록시 대상 포트(`vite.config.ts:11`의 `3002`)와 `Bun.serve` 포트(`server/index.ts:139`)는 항상 함께 바꾼다. 한쪽만 바꾸면 `/api` 호출이 실패한다.
 - AI 응답 후처리와 시스템 프롬프트는 이중 방어 구조다. 시스템 프롬프트가 "코드펜스 금지, `render(...)` 호출 포함, import 금지, TS 문법 금지"를 지시하고(`server/index.ts:11-12, 16, 20`), 서버가 `stripCodeFences`/`ensureRenderCall`로 한 번 더 보정한다 (`server/index.ts:188`). 한쪽을 제거하면 모델이 지시를 어긴 응답에서 미리보기가 깨진다. 제거하거나 약화하지 않는다.
-- API 키 누락 검사도 두 곳에 있다: 클라이언트 `src/App.tsx:34`, 서버 `server/index.ts:169`. 서버 검사가 최종 방어선이므로 클라이언트 검사만 보고 서버 검사를 제거하지 않는다.
+- API 키 누락 검사도 두 곳에 있다: 클라이언트 `src/App.tsx:46`, 서버 `server/index.ts:169`. 서버 검사가 최종 방어선이므로 클라이언트 검사만 보고 서버 검사를 제거하지 않는다.
 - 프로바이더 간 처리는 비대칭이다. Google만 모델 폴백(`server/index.ts:134-136`)과 `MAX_TOKENS` 잘림 감지(`server/index.ts:123-125`)가 있고 Anthropic 경로(`server/index.ts:68-96`)에는 없다. 한쪽 프로바이더 코드를 수정할 때 다른 쪽에 같은 처리가 필요한지 확인하고, 필요 없다면 사유를 커밋 메시지에 남긴다.
-- `Provider` 타입이 `src/types/index.ts:1`과 `server/index.ts:57`에 중복 정의되어 있다. 프로바이더를 추가하면 두 곳과 `src/App.tsx:8-11`의 `PROVIDER_CONFIG`, `server/index.ts:59-62`의 `ENV_KEYS`를 함께 수정한다.
+- `Provider` 타입이 `src/types/index.ts:1`과 `server/index.ts:57`에 중복 정의되어 있다. 프로바이더를 추가하면 두 곳과 `src/App.tsx:11-14`의 `PROVIDER_CONFIG`, `server/index.ts:59-62`의 `ENV_KEYS`를 함께 수정한다.
 - 새 외부 호출이나 기능 추가 시 순수 로직은 `server/generator.ts`, `server/fallback.ts`처럼 부수효과 없는 모듈로 분리하고 테스트를 함께 작성한다.
 
 ## Project Context
