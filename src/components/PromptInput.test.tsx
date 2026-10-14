@@ -64,4 +64,13 @@ describe('PromptInput', () => {
 
     expect(onGenerate).not.toHaveBeenCalled();
   });
+
+  it('최근 프롬프트 목록을 보여주고 클릭하면 입력창에 채운다', async () => {
+    const user = userEvent.setup();
+    render(<PromptInput onGenerate={vi.fn()} isLoading={false} history={['로그인 폼', '프로필 카드']} />);
+
+    await user.click(screen.getByRole('button', { name: '로그인 폼' }));
+
+    expect(screen.getByRole('textbox')).toHaveValue('로그인 폼');
+  });
 });
